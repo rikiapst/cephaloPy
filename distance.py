@@ -1,27 +1,19 @@
 # handle a POST request
 from math import radians, cos, sin, asin, sqrt
-from flask import Flask
+from flask import Flask, request
 import json
 app = Flask(__name__)
 
-data = [{
-    "lat1": 53.32055555555556,
-    "lat2": 53.31861111111111,
-    "lon1": -1.7297222222222221,
-    "lon2": -1.6997222222222223
-}]
-
-coordinates = json.dumps(data)
-
 
 @app.route("/test", methods=["POST"])
-def distance(json_value):
-    lst = json.loads(json_value)
+def distance():
+    print(request.data)
+    lst = json.loads(request.data)
 
-    lat1 = lst[0]["lat1"]
-    lat2 = lst[0]["lat2"]
-    lon1 = lst[0]["lon1"]
-    lon2 = lst[0]["lon2"]
+    lat1 = lst["lat1"]
+    lat2 = lst["lat2"]
+    lon1 = lst["lon1"]
+    lon2 = lst["lon2"]
 
     lon1 = radians(lon1)
     lon2 = radians(lon2)
@@ -36,9 +28,6 @@ def distance(json_value):
 
     r = 6371
 
-    return (c * r)
+    result = {"result": c * r}
 
-
-newList = distance(coordinates)
-print(coordinates)
-print(newList, 'K.M')
+    return result
