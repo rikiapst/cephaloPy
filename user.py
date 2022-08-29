@@ -1,5 +1,8 @@
 from flask import Flask, request
+import json
+
 app = Flask(__name__)
+
 
 # create python dictionary to hold user data
 user_account = {
@@ -11,29 +14,34 @@ user_account = {
          }
 }
 
-current_user = 1
+user_count = 1
 
 
-@app.route('/user/<id>')
+@app.route('/get_user/<id>', methods=["GET"])
 def get_user(id):
-    return user_account[id]
+    return user_account[int(id)]
 
 
-@app.route('/user/<id>', methods=["POST"])
-def create_user(id):
-    user_account[id] = request.data
-    current_user += 1
-    return
+@app.route('/create_user', methods=["POST"])
+def create_user():
+    global user_count
+    user_count += 1
+    value = json.loads(request.data)
+    new_id = user_count
+    user_account[new_id] = value
+    return str(user_count)
 
 
-@app.route('/user/<id>', methods=["PUT"])
+@app.route('/update_user/<id>', methods=["PUT"])
 def update_user(id):
-    user_account[id] = request.data
-    return
+    value = json.loads(request.data)
+    user_account[int(id)] = value
+    return user_account[int(id)]
 
 
-@app.route('/user/<id>', methods=["DELETE"])
+@app.route('/delete_user/<id>', methods=["DELETE"])
 def delete_user(id):
-    del user_account[id]
-    current_user -= 1
-    return
+    global user_count
+    user_account.pop(int(id))
+    user_count -= 1
+    return "user deleted"
